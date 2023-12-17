@@ -18,6 +18,18 @@ AudioKitStream kit;
 MP3DecoderHelix decoder;  // or change to MP3DecoderMAD
 AudioPlayer player(source, kit, decoder);
 
+void next(bool, int, void*) {
+   player.next();
+}
+
+void previous(bool, int, void*) {
+   player.previous();
+}
+
+void startStop(bool, int, void*) {
+   player.setActive(!player.isActive());
+}
+
 void setup() {
   Serial.begin(115200);
   AudioLogger::instance().begin(Serial, AudioLogger::Info);
@@ -27,6 +39,10 @@ void setup() {
   cfg.sd_active = false;
   kit.begin(cfg);
 
+ // setup additional buttons 
+  kit.addAction(PIN_KEY1, startStop);
+  kit.addAction(PIN_KEY4, next);
+  kit.addAction(PIN_KEY3, previous);
 
   // setup player
   player.setVolume(0.7);
@@ -34,10 +50,11 @@ void setup() {
 
   // select file with setPath() or setIndex()
   //player.setPath("/ZZ Top/Unknown Album/Lowrider.mp3");
-  player.setIndex(1); // 2nd file
+  player.setIndex(0); // 2nd file
 
 }
 
 void loop() {
   player.copy();
+  kit.processActions();
 }
