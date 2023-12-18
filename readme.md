@@ -20,10 +20,10 @@ Tunes Only Now Yours
 
 ## Firmware
 Currently the board can be controlled using Serial commands (end witn \n):  
-+,- for volume up and down
-N,P for next and previous song
-D to display directories and files
-L to load mp3s from a directory, i.e. a "playlist"
++,- for volume up and down  
+N,P for next and previous song  
+D to display directories and files  
+L to load mp3s from a directory, i.e. a "playlist"  
 
 Based on:  
 - https://github.com/pschatzmann/arduino-audiokit
