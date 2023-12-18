@@ -13,10 +13,10 @@ Tunes Only Now Yours
 - 2 buttons (volume up & down)
 
 ### SD Card
-up to 64GB, has to be FAT formatted.
-Current S1 DIP switch selections: 0 1 1 0 0, which also works for 4bit SD mode (using SDMMC library)
-https://github.com/pschatzmann/arduino-audiokit/wiki/Problems-with-the-SD-Drive-or-some-conflicting-Buttons
-https://github.com/espressif/arduino-esp32/tree/master/libraries/SD_MMC
+- up to 64GB, has to be FAT formatted.
+- Current S1 DIP switch selections: 0 1 1 0 0, which also works for 4bit SD mode (using SDMMC library)
+- https://github.com/pschatzmann/arduino-audiokit/wiki/Problems-with-the-SD-Drive-or-some-conflicting-Buttons
+- https://github.com/espressif/arduino-esp32/tree/master/libraries/SD_MMC
 
 ## Firmware
 based on
