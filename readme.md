@@ -19,15 +19,21 @@ Tunes Only Now Yours
 - https://github.com/espressif/arduino-esp32/tree/master/libraries/SD_MMC
 
 ## Firmware
-based on
+Currently the board can be controlled using Serial commands (end witn \n):  
++,- for volume up and down
+N,P for next and previous song
+D to display directories and files
+L to load mp3s from a directory, i.e. a "playlist"
+
+Based on:  
 - https://github.com/pschatzmann/arduino-audiokit
 - https://github.com/pschatzmann/arduino-audio-tools
 
 
 ## Todos
 - [ ] rfid
-- [ ] playlists
+- [X] playlists
 - [ ] upload files
 - [ ] auto limit amount of playtime per day
 - [ ] Li Aku saver
-
+- [ ] upload files over web
