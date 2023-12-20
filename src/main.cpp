@@ -17,7 +17,7 @@
 #include "AudioCodecs/CodecMP3Helix.h"
 
 #define RST_PIN   -1 // Connected to HW RST Button
-#define SS_PIN    21
+#define SS_PIN    19
 
 const char *startFilePath = "/";
 const char *ext = "mp3";

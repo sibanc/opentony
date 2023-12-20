@@ -32,13 +32,13 @@ Tunes Only Now Yours
 
 #### RC522 Breakout Board (Multidrop SPI Bus)
 
-| Description  | #define in main.cpp        | ESP32 Module |
-| ------------ | -------------------------- | ------------ |
-| RFID    CLK  | RFID_CLK                   | P1 MTCK      |
-| RFID    MISO | RFID_MISO                  | P1 MTDO      |
-| RFID    MOSI | RFID_MOSI                  | P1 MTDI      |
-| RFID    SS   | RFID_SS                    | P2 GPIO 21   |
-| RFID    RST  | RFID_RST                   | P3 RST       |
+| Description  | #define in main.cpp        | ESP32 Module | Ai Thinker Schematics |
+| ------------ | -------------------------- | ------------ | --------------------- |
+| RFID    CLK  | RFID_CLK                   | GPIO 14      | P1 MTMS               |
+| RFID    MISO | RFID_MISO                  | GPIO 12      | P1 MTDI               |
+| RFID    MOSI | RFID_MOSI                  | GPIO 15      | P1 MTDO               |
+| RFID    SS   | RFID_SS                    | GPIO 19      | P2 IO19               |
+| RFID    RST  | RFID_RST                   | N/A          | P3 RST                |
 
 ## Firmware
 Currently the board can be controlled using Serial commands (end witn \n):  
