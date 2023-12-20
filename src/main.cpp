@@ -5,18 +5,28 @@
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
+#define USE_A2DP
+
+#include <Arduino.h>
+#include <SPI.h>
+#include <MFRC522.h>
 
 #include "AudioTools.h"
 #include "AudioLibs/AudioKit.h"
 #include "AudioLibs/AudioSourceIdxSDMMC.h" // or AudioSourceIdxSDMMC.h
 #include "AudioCodecs/CodecMP3Helix.h"
 
+#define RST_PIN   -1 // Connected to HW RST Button
+#define SS_PIN    21
+
 const char *startFilePath = "/";
 const char *ext = "mp3";
+
 AudioSourceIdxSDMMC source(startFilePath, ext);
 AudioKitStream kit;
 MP3DecoderHelix decoder; // or change to MP3DecoderMAD
 AudioPlayer player(source, kit, decoder);
+MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 const int BUFFER_SIZE = 100;
 char buf[BUFFER_SIZE];
@@ -117,6 +127,7 @@ void startStop(bool, int, void *)
 void setup()
 {
   Serial.begin(115200);
+  SPI.begin();
   AudioLogger::instance().begin(Serial, AudioLogger::Warning);
 
   // setup output
@@ -134,6 +145,11 @@ void setup()
   // setup player
   player.setVolume(volume / 10.0);
   player.begin();
+
+  // setup rfid module
+  mfrc522.PCD_Init();
+	delay(4);	// Optional delay. Some board do need time after init to be ready
+	mfrc522.PCD_DumpVersionToSerial();
 
   // select file with setPath() or setIndex()
   // player.setPath("/ZZ Top/Unknown Album/Lowrider.mp3");
@@ -208,10 +224,35 @@ void processSerial()
   }
 }
 
+void readRFID()
+{
+  // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
+	if ( ! mfrc522.PICC_IsNewCardPresent()) {
+		return;
+	}
+
+	// Select one of the cards
+	if ( ! mfrc522.PICC_ReadCardSerial()) {
+		return;
+	}
+
+	// Dump debug info about the card; PICC_HaltA() is automatically called
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+      Serial.print("Detected UID:");
+      for (byte i = 0; i < mfrc522.uid.size; i++) {
+        Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0x0" : " 0x");
+        Serial.print(mfrc522.uid.uidByte[i], HEX);
+      }
+  }
+  Serial.println();
+
+  mfrc522.PICC_HaltA();
+}
+
 void loop()
 {
   player.copy();
   kit.processActions();
-
+  readRFID();
   processSerial();
 }

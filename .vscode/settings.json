@@ -14,5 +14,5 @@
         "fstream": "cpp"
     },
     "cmake.configureOnOpen": true,
-    "julia.environmentPath": "g:\\electronics\\opentony"
+    "julia.environmentPath": "c:\\Users\\rakul\\Repositories\\embedded\\opentony"
 }
