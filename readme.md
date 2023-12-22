@@ -14,9 +14,9 @@ Tunes Only Now Yours
 
 free pins (potentianly)
 P1
-- IO15 (JT_MTDO, SD_CMD)
-- IO13 (JT_MTCK, SD card... maybe also in 1 bit mode)
-- IO12 (SD2)
+- IO15 (JT_MTDO, SD_CMD ... CS)
+- IO13 (JT_MTCK, SD card... maybe also in 1 bit mode.. MOSI)
+- IO12 (SD2... MISO)
 - IO14 (SD_CLK)
 
 P2  
