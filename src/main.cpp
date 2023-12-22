@@ -11,6 +11,10 @@
 #include "AudioLibs/AudioSourceIdxSDMMC.h" // or AudioSourceIdxSDMMC.h
 #include "AudioCodecs/CodecMP3Helix.h"
 
+// One task per core
+TaskHandle_t Task1;
+TaskHandle_t Task2;
+
 const char *startFilePath = "/";
 const char *ext = "mp3";
 AudioSourceIdxSDMMC source(startFilePath, ext);
@@ -114,32 +118,6 @@ void startStop(bool, int, void *)
   player.setActive(!player.isActive());
 }
 
-void setup()
-{
-  Serial.begin(115200);
-  AudioLogger::instance().begin(Serial, AudioLogger::Warning);
-
-  // setup output
-  auto cfg = kit.defaultConfig(TX_MODE);
-  cfg.sd_active = false;
-  kit.begin(cfg);
-
-  // setup additional buttons
-  kit.addAction(PIN_KEY1, startStop);
-  kit.addAction(PIN_KEY4, rfid1);
-  kit.addAction(PIN_KEY3, rfid2);
-  kit.addAction(PIN_KEY5, volume_down);
-  kit.addAction(PIN_KEY6, volume_up);
-
-  // setup player
-  player.setVolume(volume / 10.0);
-  player.begin();
-
-  // select file with setPath() or setIndex()
-  // player.setPath("/ZZ Top/Unknown Album/Lowrider.mp3");
-  player.setIndex(0); // 2nd file
-}
-
 void playlist(const char *dir)
 {
   if (isDirectory(SD_MMC, dir))
@@ -208,10 +186,72 @@ void processSerial()
   }
 }
 
+void Task2code( void * pvParameters ){
+
+  // setup output
+  auto cfg = kit.defaultConfig(TX_MODE);
+  cfg.sd_active = false;
+  kit.begin(cfg);
+
+  // setup additional buttons
+  kit.addAction(PIN_KEY1, startStop);
+  kit.addAction(PIN_KEY4, rfid1);
+  kit.addAction(PIN_KEY3, rfid2);
+  kit.addAction(PIN_KEY5, volume_down);
+  kit.addAction(PIN_KEY6, volume_up);
+
+  // setup player
+  player.setVolume(volume / 10.0);
+  player.begin();
+
+  // select file with setPath() or setIndex()
+  // player.setPath("/ZZ Top/Unknown Album/Lowrider.mp3");
+  player.setIndex(0); // 2nd file
+
+
+  while (true){
+    player.copy();
+    kit.processActions();
+    processSerial();
+  } 
+}
+
+void Task1code( void * pvParameters ){
+    while (true){
+        /* this seems necessary to trigger the watchdog */
+        delay(1);
+        yield();
+    }
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  AudioLogger::instance().begin(Serial, AudioLogger::Warning);
+
+  //create a task that will be executed in the Task1code() function, with priority 1 and executed on core 0
+  xTaskCreatePinnedToCore(
+                    Task1code,   /* Task function. */
+                    "Task1",     /* name of task. */
+                    10000,       /* Stack size of task */
+                    NULL,        /* parameter of the task */
+                    1,           /* priority of the task */
+                    &Task1,      /* Task handle to keep track of created task */
+                    0);          /* pin task to core 0 */                  
+  delay(500); 
+
+  //create a task that will be executed in the Task2code() function, with priority 1 and executed on core 1
+  xTaskCreatePinnedToCore(
+                    Task2code,   /* Task function. */
+                    "Task2",     /* name of task. */
+                    10000,       /* Stack size of task */
+                    NULL,        /* parameter of the task */
+                    1,           /* priority of the task */
+                    &Task2,      /* Task handle to keep track of created task */
+                    1);          /* pin task to core 1 */
+  delay(500); 
+}
+
 void loop()
 {
-  player.copy();
-  kit.processActions();
-
-  processSerial();
 }
