@@ -5,7 +5,6 @@
  * @author Phil Schatzmann
  * @copyright GPLv3
  */
-#define USE_A2DP
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -17,7 +16,7 @@
 #include "AudioCodecs/CodecMP3Helix.h"
 
 #define RST_PIN   -1 // Connected to HW RST Button
-#define SS_PIN    19
+#define SS_PIN    21
 
 const char *startFilePath = "/";
 const char *ext = "mp3";
@@ -147,9 +146,19 @@ void setup()
   player.begin();
 
   // setup rfid module
+  pinMode(SS_PIN, OUTPUT);
+  digitalWrite(SS_PIN, LOW);
   mfrc522.PCD_Init();
 	delay(4);	// Optional delay. Some board do need time after init to be ready
 	mfrc522.PCD_DumpVersionToSerial();
+
+  // print SPI pins
+  Serial.print("SPI Pin Dump. MOSI: ");
+  Serial.println(MOSI);
+  Serial.print("SPI Pin Dump. MISO: ");
+  Serial.println(MISO);
+  Serial.print("SPI Pin Dump. SCK: ");
+  Serial.println(SCK);
 
   // select file with setPath() or setIndex()
   // player.setPath("/ZZ Top/Unknown Album/Lowrider.mp3");
@@ -226,6 +235,7 @@ void processSerial()
 
 void readRFID()
 {
+  digitalWrite(SS_PIN, LOW);
   // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
 	if ( ! mfrc522.PICC_IsNewCardPresent()) {
 		return;
