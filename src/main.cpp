@@ -8,6 +8,8 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+
+#define MFRC522_SPICLOCK (1000000u)
 #include <MFRC522.h>
 
 #include "AudioTools.h"
